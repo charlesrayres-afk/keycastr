@@ -43,6 +43,8 @@
 	CGFloat _maxWidth;
     NSColor* _backgroundColor;
     float _opacity;
+    CGFloat _fontSizeOverride;
+    BOOL _hasGrownWindowForInitialSize;
 
 	NSTextStorage* _textStorage;
 	NSLayoutManager* _layoutManager;
@@ -54,7 +56,10 @@
 -(void) maybeResize;
 -(void) setAlphaValue:(float)opacity;
 -(void) appendString:(NSString*)t;
+-(void) setText:(NSString*)t;
+-(void) setText:(NSString*)t fontSize:(CGFloat)fontSize;
 -(void) scheduleFadeOut;
+-(void) beginFadeOut:(id)sender;
 
 @end
 
@@ -73,12 +78,24 @@
 @interface KCDefaultVisualizerWindow : NSWindow
 {
 	KCDefaultVisualizerBezelView* _currentBezelView;
-	NSMutableArray* _runningAnimations;
+    NSMutableArray* _runningAnimations;
+    NSString* _lastCommandString;
+    NSUInteger _commandRepeatCount;
+    NSUInteger _plainCharCount;
+    BOOL _isModifierOnlyBezel;
 }
 
 - (void)addKeystroke:(KCKeystroke *)keystroke;
 - (void)addMouseEvent:(KCMouseEvent *)mouseEvent;
 - (void)addRunningAnimation:(KCBezelAnimation *)animation;
+- (BOOL)hasActiveBezel;
+- (BOOL)isShowingModifierOnlyBezel;
+- (void)showModifierGlyphs:(NSString *)glyphs;
+- (void)dismissModifierGlyphsIfNeeded;
+- (void)noteModifierFlagsChanged:(NSEventModifierFlags)flags;
+- (void)noteKeyUp:(uint16_t)keyCode;
+- (void)forceDismissAnyLingeringBezel;
+- (void)noteBezelViewDidFadeOut:(KCDefaultVisualizerBezelView *)bezelView;
 
 - (instancetype)init;
 
@@ -96,18 +113,23 @@ typedef NS_ENUM(NSInteger, KCDefaultVisualizerDisplayOption) {
 @property (nonatomic, assign) IBOutlet NSButton *commandKeysOnlyButton;
 @property (nonatomic, assign) IBOutlet NSButton *allModifiedKeysButton;
 @property (nonatomic, assign) IBOutlet NSButton *allKeysButton;
+@property (nonatomic, assign) IBOutlet NSButton *collapseRepeatedShortcutsButton;
+@property (nonatomic, assign) IBOutlet NSButton *collapseLongTypingButton;
+@property (nonatomic, assign) IBOutlet NSButton *showHeldModifiersButton;
 
 @end
 
 @interface KCDefaultVisualizer : KCVisualizer <KCVisualizer>
 {
-	KCDefaultVisualizerWindow* visualizerWindow;
+    KCDefaultVisualizerWindow* visualizerWindow;
+    NSEventModifierFlags _pendingModifierFlags;
 }
 
 @property (nonatomic, assign) IBOutlet KCDefaultVisualizerPreferencesView *preferencesView;
 @property (nonatomic, assign) KCDefaultVisualizerDisplayOption displayMode;
 
 - (IBAction)preferencesViewDidSelectDisplayOption:(id)sender;
+- (IBAction)preferencesViewDidToggleCheckbox:(id)sender;
 
 - (BOOL)shouldOnlyDisplayCommandKeys;
 - (BOOL)shouldOnlyDisplayModifiedKeys;

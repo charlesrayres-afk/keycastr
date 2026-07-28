@@ -46,6 +46,16 @@
 - (void)noteFlagsChanged:(NSEventModifierFlags)flags;
 - (void)noteMouseEvent:(KCMouseEvent *)mouseEvent;
 
+@optional
+- (void)noteKeyUpEvent:(KCKeycastrEvent *)event;
+
+// Called when capturing transitions from on to off, regardless of what triggered it (the
+// toggle hotkey, the status menu, anything else). Lets a visualizer clean up any state
+// that was waiting on a future key-up/flags-changed event to resolve itself -- capturing
+// being off means those events, even if they still physically occur, will never be
+// forwarded here again.
+- (void)noteCapturingDidStop;
+
 @end
 
 

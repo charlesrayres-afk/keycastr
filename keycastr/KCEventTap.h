@@ -45,6 +45,7 @@
 @protocol KCEventTapDelegate
 
 - (void)eventTap:(KCEventTap *)tap noteKeystroke:(KCKeystroke *)keystroke;
+- (void)eventTap:(KCEventTap *)tap noteKeyUp:(KCKeystroke *)keystroke;
 - (void)eventTap:(KCEventTap *)tap noteMouseEvent:(KCMouseEvent *)mouseEvent;
 - (void)eventTap:(KCEventTap *)tap noteFlagsChanged:(NSEventModifierFlags)flags;
 

@@ -32,6 +32,7 @@
 
 #import <Quartz/Quartz.h>
 #import <ShortcutRecorder/ShortcutRecorder.h>
+#import "KCAnnotationModeController.h"
 #import "KCAppController.h"
 #import "KCEventTap.h"
 #import "KCKeystroke.h"
@@ -54,7 +55,13 @@ static NSString* kKCSupplementalAlertText = @"\n\nPlease grant KeyCastr access t
 static NSInteger kKCPrefDisplayIconInMenuBar = 0x01;
 static NSInteger kKCPrefDisplayIconInDock = 0x02;
 
-@interface KCAppController () <KCEventTapDelegate, KCMouseEventVisualizerDelegate>
+// Encodes an NSColor via NSKeyedArchiver, matching how default.bezelColor/textColor are
+// encoded in KCDefaultVisualizer.m -- used below for default.annotationStrokeColor.
+static NSData *KCArchivedColor(NSColor *color) {
+    return [NSKeyedArchiver archivedDataWithRootObject:color requiringSecureCoding:NO error:NULL];
+}
+
+@interface KCAppController () <KCEventTapDelegate, KCMouseEventVisualizerDelegate, NSMenuItemValidation, NSMenuDelegate>
 
 @property (nonatomic, strong) KCEventTap *eventTap;
 @property (nonatomic, strong) NSStatusItem *statusItem;
@@ -75,6 +82,12 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
 
 @property (nonatomic, strong) KCMouseEventVisualizer *mouseEventVisualizer;
 @property (nonatomic, strong) id<KCVisualizer> currentVisualizer;
+
+@property (nonatomic, strong) NSMenuItem *annotationModeMenuItem;
+@property (nonatomic, strong) NSMenuItem *persistentAnnotationsMenuItem;
+@property (nonatomic, strong) NSMenuItem *clearAnnotationsMenuItem;
+
+@property (nonatomic, strong) KCAnnotationModeController *annotationModeController;
 
 @end
 
@@ -101,6 +114,8 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
     mouseEventVisualizer = [KCMouseEventVisualizer new];
     mouseEventVisualizer.delegate = self;
 
+    self.annotationModeController = [KCAnnotationModeController new];
+
     [NSColor setIgnoresAlpha:NO];
 
     return self;
@@ -122,6 +137,162 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
                                             forKeyPath:kKCPrefDisplayIcon
                                                options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew)
                                                context:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(applicationDidHide:)
+                                                 name:NSApplicationDidHideNotification
+                                               object:NSApp];
+
+    [self reorderStatusMenu];
+}
+
+- (void)applicationDidHide:(NSNotification *)notification {
+    [NSApp unhideWithoutActivation];
+}
+
+// The status menu's base items (About/Preferences/Start-Stop Casting/Quit) are built
+// entirely in the nib -- there's no NSMenuItem-construction code for them to reorder
+// directly. Quit is located by its action selector (unique within this menu; there's no
+// IBOutlet for it) rather than by title, since that's stable regardless of exact string
+// formatting. About/Preferences/Casting are already in the nib's existing relative order
+// (confirmed by inspecting Base.lproj/MainMenu.nib/designable.nib) and don't need to move
+// -- only Quit needs repositioning, and separators need adding around the annotation group
+// and before Quit, isolating it at the bottom per standard macOS convention.
+- (void)reorderStatusMenu {
+    if (statusMenu == nil) {
+        return;
+    }
+
+    NSMenuItem *quitItem = nil;
+    for (NSMenuItem *item in statusMenu.itemArray) {
+        if (item.action == @selector(terminate:)) {
+            quitItem = item;
+            break;
+        }
+    }
+
+    if (quitItem != nil) {
+        [statusMenu removeItem:quitItem];
+    }
+
+    [statusMenu addItem:[NSMenuItem separatorItem]];
+    [self installAnnotationMenuItems];
+    [statusMenu addItem:[NSMenuItem separatorItem]];
+
+    if (quitItem != nil) {
+        [statusMenu addItem:quitItem];
+    }
+}
+
+#pragma mark -
+#pragma mark Annotation Mode
+
+// Appended after whatever's already in the status menu (defined in the xib) -- these are
+// checkable mode toggles / a related action, kept together as their own trailing group.
+- (void)installAnnotationMenuItems {
+    if (statusMenu == nil) {
+        return;
+    }
+
+    // statusMenu has no existing delegate anywhere in this codebase (checked), so it's
+    // safe to claim it here for -menu:hasKeyEquivalent:forEvent:target:action: below.
+    statusMenu.delegate = self;
+
+    NSMenuItem *annotationItem = [[NSMenuItem alloc] initWithTitle:@"Annotation Mode"
+                                                             action:@selector(toggleAnnotationMode:)
+                                                      keyEquivalent:@"a"];
+    annotationItem.target = self;
+    annotationItem.keyEquivalentModifierMask = NSEventModifierFlagControl | NSEventModifierFlagOption;
+    [statusMenu addItem:annotationItem];
+    self.annotationModeMenuItem = annotationItem;
+
+    NSMenuItem *persistentItem = [[NSMenuItem alloc] initWithTitle:@"Persistent Annotations"
+                                                              action:@selector(toggleAnnotationPersistence:)
+                                                       keyEquivalent:@""];
+    persistentItem.target = self;
+    [statusMenu addItem:persistentItem];
+    self.persistentAnnotationsMenuItem = persistentItem;
+
+    NSMenuItem *clearItem = [[NSMenuItem alloc] initWithTitle:@"Clear Annotations"
+                                                        action:@selector(clearAnnotations:)
+                                                 keyEquivalent:@"c"];
+    clearItem.target = self;
+    clearItem.keyEquivalentModifierMask = NSEventModifierFlagControl | NSEventModifierFlagOption;
+    [statusMenu addItem:clearItem];
+    self.clearAnnotationsMenuItem = clearItem;
+
+    // Annotation Mode and Clear Annotations now carry REAL keyEquivalent/
+    // keyEquivalentModifierMask, purely so AppKit renders the native right-aligned shortcut
+    // hint -- but invoking them via that key equivalent is suppressed below in
+    // -menu:hasKeyEquivalent:forEvent:target:action:, so the only real trigger for either
+    // remains the global KCEventTap-based hotkey, unchanged, which fires regardless of
+    // focus. Without that suppression, pressing Ctrl+Opt+A/C while KeyCastr is frontmost
+    // would fire the action twice: once from the global event tap, once from AppKit's own
+    // menu key-equivalent dispatch. Persistent Annotations has no hotkey, so it keeps an
+    // empty keyEquivalent and isn't affected by any of this.
+}
+
+// See the comment in -installAnnotationMenuItems for why this exists. Per AppKit's
+// documented behavior for this method: returning NO means "I have no opinion, do your
+// normal per-item keyEquivalent search" -- which would still find and invoke a matching
+// item normally. Returning YES means "I've resolved this myself," and handing back a nil
+// target/NULL action means the resolution is "nothing to invoke," bypassing AppKit's own
+// search entirely for this event. That's the actual suppression mechanism: YES+nil for our
+// two combos, NO for every other key equivalent in the app (Quit, Preferences, etc.), which
+// falls through to AppKit's completely normal, untouched per-item search.
+- (BOOL)menu:(NSMenu *)menu hasKeyEquivalent:(NSString *)string forEvent:(NSEvent *)event target:(id *)target action:(SEL *)action {
+    NSEventModifierFlags relevantFlags = event.modifierFlags & (NSEventModifierFlagControl | NSEventModifierFlagOption | NSEventModifierFlagCommand | NSEventModifierFlagShift);
+
+    BOOL matchesAnnotationItem = relevantFlags == self.annotationModeMenuItem.keyEquivalentModifierMask
+        && [string isEqualToString:self.annotationModeMenuItem.keyEquivalent];
+    BOOL matchesClearItem = relevantFlags == self.clearAnnotationsMenuItem.keyEquivalentModifierMask
+        && [string isEqualToString:self.clearAnnotationsMenuItem.keyEquivalent];
+
+    if (matchesAnnotationItem || matchesClearItem) {
+        if (target) {
+            *target = nil;
+        }
+        if (action) {
+            *action = NULL;
+        }
+        return YES;
+    }
+
+    return NO;
+}
+
+- (void)toggleAnnotationMode:(id)sender {
+    [self.annotationModeController toggleAnnotationMode];
+}
+
+- (void)toggleAnnotationPersistence:(id)sender {
+    [self.annotationModeController togglePersistentAnnotations];
+}
+
+- (void)clearAnnotations:(id)sender {
+    [self.annotationModeController clearAnnotations];
+}
+
+// Sync mechanism for both checkmarks: NSMenuItemValidation, not a notification or eager
+// push after every toggle call site. AppKit calls -validateMenuItem: on this item's target
+// automatically, right before the menu is shown, for every item with a target+action --
+// no extra wiring (no delegate, no observer add/remove) beyond implementing this one
+// method. That makes it correct by construction regardless of how many places call
+// -toggleAnnotationMode/-togglePersistentAnnotations now or in the future (hotkey today,
+// these menu items, anything added later): none of them need to remember to "also refresh
+// the menu," since nothing refreshes it manually at all -- it's always recomputed fresh
+// from the single source of truth (KCAnnotationModeController) at the moment it's about to
+// be seen. A notification/KVO push would only be worth the extra plumbing if some other,
+// simultaneously-visible piece of UI also needed to reflect this state while the menu is
+// closed, which isn't the case here. Clear Annotations has no state to sync -- it's a
+// momentary action, not a toggle.
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
+    if (menuItem == self.annotationModeMenuItem) {
+        menuItem.state = self.annotationModeController.isAnnotationModeEnabled ? NSControlStateValueOn : NSControlStateValueOff;
+    } else if (menuItem == self.persistentAnnotationsMenuItem) {
+        menuItem.state = self.annotationModeController.isPersistentAnnotationsEnabled ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+    return YES;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
@@ -222,7 +393,11 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
     NSDictionary *appDefaults = @{ kKCPrefDisplayIcon: @3,
                                    kKCPrefSelectedVisualizer: @"Default",
                                    kKCPrefVisibleAtLaunch: @YES,
-                                   kKCPrefCapturingHotKey: [NSData dataWithBytes:&keyCombo length:sizeof(keyCombo)] };
+                                   kKCPrefCapturingHotKey: [NSData dataWithBytes:&keyCombo length:sizeof(keyCombo)],
+                                   @"default.annotationDiameter": @40.0,
+                                   @"default.annotationStrokeWidth": @2.0,
+                                   @"default.annotationStrokeColor": KCArchivedColor([NSColor colorWithCalibratedRed:1.0 green:0.65 blue:0.0 alpha:1.0]),
+                                   @"default.annotationFillOpacity": @0.0 };
     
     NSArray *factories = [KCVisualizer availableVisualizerFactories];
     NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
@@ -239,6 +414,10 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
 
 - (void)eventTap:(KCEventTap *)tap noteKeystroke:(KCKeystroke *)keystroke
 {
+    if ([self.annotationModeController handleKeystroke:keystroke]) {
+        return;
+    }
+
     if (keystroke.keyCode == self.toggleCastingShortcut.keyCode && (keystroke.modifierFlags & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagShift | NSEventModifierFlagOption)) == (self.toggleCastingShortcut.modifierFlags & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagShift | NSEventModifierFlagOption)))
 	{
         [self toggleRecording:self];
@@ -251,6 +430,17 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
 
     if (currentVisualizer != nil) {
 		[currentVisualizer noteKeyEvent:keystroke];
+    }
+}
+
+- (void)eventTap:(KCEventTap *)tap noteKeyUp:(KCKeystroke *)keystroke
+{
+    if (!_isCapturing) {
+        return;
+    }
+
+    if (currentVisualizer != nil && [currentVisualizer respondsToSelector:@selector(noteKeyUpEvent:)]) {
+        [currentVisualizer noteKeyUpEvent:keystroke];
     }
 }
 
@@ -289,7 +479,6 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
 		[statusItem.button setImage:(_isCapturing
 			? [NSImage imageNamed:@"KeyCastrStatusItemActive"]
 			: [NSImage imageNamed:@"KeyCastrStatusItemInactive"])];
-		statusItem.button.cell.highlighted = YES;
 	}
 	return statusItem;
 }
@@ -435,7 +624,20 @@ static NSInteger kKCPrefDisplayIconInDock = 0x02;
         return;
     }
 
+    BOOL wasCapturing = _isCapturing;
 	_isCapturing = capture;
+
+    // Fires regardless of what stopped capturing (hotkey, menu, anything else funneling
+    // through this one setter) -- see the protocol method's doc comment for why this is
+    // needed: the event tap itself never stops running, so KCAppController's own
+    // _isCapturing guards are what silently drop any future key-up/flags-changed events a
+    // visualizer might have been relying on to resolve state left over from before the stop.
+    if (wasCapturing && !capture) {
+        if (currentVisualizer != nil && [currentVisualizer respondsToSelector:@selector(noteCapturingDidStop)]) {
+            [currentVisualizer noteCapturingDidStop];
+        }
+    }
+
 	[statusItem.button setImage:(_isCapturing
 		? [NSImage imageNamed:@"KeyCastrStatusItemActive"]
 		: [NSImage imageNamed:@"KeyCastrStatusItemInactive"])

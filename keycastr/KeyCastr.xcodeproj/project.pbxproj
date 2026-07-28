@@ -16,6 +16,7 @@
 		324ADBCB6A0995C04527E1D8 /* NSBezierPath+RoundedRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 324AD5B73A2BC2916E285219 /* NSBezierPath+RoundedRect.m */; };
 		324ADDDF7A11FD8A03BE1995 /* KCMouseEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 324ADE0BF78E9FB58C02F49B /* KCMouseEvent.m */; };
 		324ADE7F91EC0CAFD38BA4BA /* KCMouseEventVisualizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 324ADDDFBC424496DA228C39 /* KCMouseEventVisualizer.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		368D0BB14AEBB4EC9E0182EE /* KCAnnotationShapeView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF271993D25F9DCA1EA0A86C /* KCAnnotationShapeView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3D1640500F3BCC6900CA65AD /* KeyCastrStatusItemActive.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D16404E0F3BCC6900CA65AD /* KeyCastrStatusItemActive.png */; };
 		3D1640510F3BCC6900CA65AD /* KeyCastrStatusItemInactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 3D16404F0F3BCC6900CA65AD /* KeyCastrStatusItemInactive.png */; };
 		3D1640600F3BCEC900CA65AD /* KeyCastrInactive.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3D16405F0F3BCEC900CA65AD /* KeyCastrInactive.icns */; };
@@ -41,6 +42,7 @@
 		3D3F548A0F30F37E001C7272 /* GeneralIcon.tif in Resources */ = {isa = PBXBuildFile; fileRef = 3D3F54870F30F37E001C7272 /* GeneralIcon.tif */; };
 		3D3F548B0F30F37E001C7272 /* DisplayIcon.tif in Resources */ = {isa = PBXBuildFile; fileRef = 3D3F54880F30F37E001C7272 /* DisplayIcon.tif */; };
 		3D3F548E0F30F3C7001C7272 /* UpdateIcon.tif in Resources */ = {isa = PBXBuildFile; fileRef = 3D3F548D0F30F3C7001C7272 /* UpdateIcon.tif */; };
+		7881490F03021CAAB3E2A043 /* KCAnnotationOverlayWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 878F9F333F399D4ABD2A63F1 /* KCAnnotationOverlayWindow.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -68,6 +70,7 @@
 		AFF68CA12C05480600B98D92 /* KCUserDefaultsMigrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AFF68CA02C05480600B98D92 /* KCUserDefaultsMigrationTests.m */; };
 		AFF68CBA2C05776000B98D92 /* KCUserDefaultsMigration.m in Sources */ = {isa = PBXBuildFile; fileRef = AFF68CB92C05776000B98D92 /* KCUserDefaultsMigration.m */; };
 		AFF68CBB2C05776000B98D92 /* KCUserDefaultsMigration.h in Headers */ = {isa = PBXBuildFile; fileRef = AFF68CB82C05776000B98D92 /* KCUserDefaultsMigration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B685B32A0496E5FCBED508CC /* KCAnnotationModeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3F6897815FC6B03D5AA8831 /* KCAnnotationModeController.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -328,6 +331,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0D064B2D607DDBF112091639 /* KCAnnotationOverlayWindow.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = KCAnnotationOverlayWindow.h; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -375,6 +379,7 @@
 		3D3F56CA0F337533001C7272 /* NSUserDefaults+Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+Utility.m"; sourceTree = "<group>"; };
 		3DC3146F0F33EEF400B67D65 /* KCKeystroke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCKeystroke.h; sourceTree = "<group>"; };
 		3DC314700F33EEF400B67D65 /* KCKeystroke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KCKeystroke.m; sourceTree = "<group>"; };
+		878F9F333F399D4ABD2A63F1 /* KCAnnotationOverlayWindow.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = KCAnnotationOverlayWindow.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* KeyCastr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KeyCastr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE3938871BB73B36005458A6 /* KeyCastrStatusItem.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KeyCastrStatusItem.png; sourceTree = "<group>"; };
@@ -399,6 +404,10 @@
 		AFF68CA02C05480600B98D92 /* KCUserDefaultsMigrationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KCUserDefaultsMigrationTests.m; sourceTree = "<group>"; };
 		AFF68CB82C05776000B98D92 /* KCUserDefaultsMigration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KCUserDefaultsMigration.h; sourceTree = "<group>"; };
 		AFF68CB92C05776000B98D92 /* KCUserDefaultsMigration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KCUserDefaultsMigration.m; sourceTree = "<group>"; };
+		C15259E6ACDAED4D54E9C590 /* KCAnnotationShapeView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = KCAnnotationShapeView.h; sourceTree = "<group>"; };
+		D2C123F7065863D9739FA654 /* KCAnnotationModeController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = KCAnnotationModeController.h; sourceTree = "<group>"; };
+		E3F6897815FC6B03D5AA8831 /* KCAnnotationModeController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = KCAnnotationModeController.m; sourceTree = "<group>"; };
+		FF271993D25F9DCA1EA0A86C /* KCAnnotationShapeView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = KCAnnotationShapeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -459,6 +468,12 @@
 				3D3F52EA0F30CB13001C7272 /* KCPrefsWindowController.m */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				D2C123F7065863D9739FA654 /* KCAnnotationModeController.h */,
+				E3F6897815FC6B03D5AA8831 /* KCAnnotationModeController.m */,
+				0D064B2D607DDBF112091639 /* KCAnnotationOverlayWindow.h */,
+				878F9F333F399D4ABD2A63F1 /* KCAnnotationOverlayWindow.m */,
+				C15259E6ACDAED4D54E9C590 /* KCAnnotationShapeView.h */,
+				FF271993D25F9DCA1EA0A86C /* KCAnnotationShapeView.m */,
 			);
 			name = Application;
 			sourceTree = "<group>";
@@ -475,7 +490,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		29B97314FDCFA39411CA2CEA /* KeyCastr */ = {
+		29B97314FDCFA39411CA2CEA = {
 			isa = PBXGroup;
 			children = (
 				AFB1F705235BC9AB0092F4A9 /* KeyCastr.entitlements */,
@@ -809,7 +824,8 @@
 				en,
 				Base,
 			);
-			mainGroup = 29B97314FDCFA39411CA2CEA /* KeyCastr */;
+			mainGroup = 29B97314FDCFA39411CA2CEA;
+			productRefGroup = 19C28FACFE9D520D11CA2CBB /* Products */;
 			projectDirPath = "";
 			projectReferences = (
 				{
@@ -1078,6 +1094,9 @@
 				3D3F52EB0F30CB13001C7272 /* KCPrefsWindowController.m in Sources */,
 				3D3F540C0F30E8E7001C7272 /* KCEventTap.m in Sources */,
 				3D1646EB0F43DD3000CA65AD /* KCAppController.m in Sources */,
+				B685B32A0496E5FCBED508CC /* KCAnnotationModeController.m in Sources */,
+				7881490F03021CAAB3E2A043 /* KCAnnotationOverlayWindow.m in Sources */,
+				368D0BB14AEBB4EC9E0182EE /* KCAnnotationShapeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1443,7 +1462,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = 68TUCLNAPS;
+				DEVELOPMENT_TEAM = PCNDUNDK86;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1478,12 +1497,11 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = KeyCastr.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(MARKETING_VERSION)";
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 68TUCLNAPS;
+				DEVELOPMENT_TEAM = PCNDUNDK86;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1505,7 +1523,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.keycastr;
 				PRODUCT_NAME = KeyCastr;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "KeyCastr Developer ID Distribution";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

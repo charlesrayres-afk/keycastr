@@ -44,6 +44,7 @@
 
 - (void)_noteMouseEvent:(CGEventRef)eventRef;
 - (void)_noteKeyEvent:(CGEventRef)eventRef;
+- (void)_noteKeyUpEvent:(CGEventRef)eventRef;
 - (void)_noteFlagsChanged:(CGEventRef)event;
 
 @end
@@ -61,6 +62,7 @@ CGEventRef keyEventTapCallback(
             [eventTap _noteKeyEvent:event];
             break;
         case kCGEventKeyUp:
+            [eventTap _noteKeyUpEvent:event];
             break;
         default:
             break;
@@ -163,6 +165,15 @@ CGEventRef mouseAndFlagsEventTapCallback(
                                                     );
     
     if (mouseAndFlagsEventTap == NULL) {
+        // The key event tap above was already created successfully -- without this, it's
+        // leaked on this failure path (CFMachPortRef isn't ARC-managed, so nothing releases
+        // it implicitly). This used to only matter in practice because the caller's response
+        // to a NO here is a fatal permissions alert followed by app termination, which
+        // reclaims everything via process exit regardless -- but that's incidental, not a
+        // reason for this method to be wrong on its own terms.
+        CFRelease(keyEventTap);
+        keyEventTap = NULL;
+
         if (error != NULL) {
             *error = [self constructErrorWithDescription:@"Could not create mouse and modifiers event tap!"];
         }
@@ -221,8 +232,18 @@ CGEventRef mouseAndFlagsEventTapCallback(
 -(void) _noteKeyEvent:(CGEventRef)eventRef
 {
     NSEvent *event = [NSEvent eventWithCGEvent:eventRef];
+    if (event.isARepeat) {
+        return;
+    }
     KCKeystroke* keystroke = [KCKeystroke eventWithNSEvent:event];
     [self noteKeystroke:keystroke];
+}
+
+- (void)_noteKeyUpEvent:(CGEventRef)eventRef
+{
+    NSEvent *event = [NSEvent eventWithCGEvent:eventRef];
+    KCKeystroke *keystroke = [KCKeystroke eventWithNSEvent:event];
+    [self noteKeyUp:keystroke];
 }
 
 - (void)_noteMouseEvent:(CGEventRef)eventRef
@@ -235,6 +256,11 @@ CGEventRef mouseAndFlagsEventTapCallback(
 -(void) noteKeystroke:(KCKeystroke*)keystroke
 {
     [_delegate eventTap:self noteKeystroke:keystroke];
+}
+
+-(void) noteKeyUp:(KCKeystroke*)keystroke
+{
+    [_delegate eventTap:self noteKeyUp:keystroke];
 }
 
 -(void) noteFlagsChanged:(NSEventModifierFlags)newFlags

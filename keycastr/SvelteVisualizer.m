@@ -33,6 +33,33 @@
 #import "KCKeystroke.h"
 #import "KCMouseEvent.h"
 
+// Mirrors KCDefaultVisualizerWindow's identically-named checks in KCDefaultVisualizer.m --
+// duplicated locally rather than shared, since this class lives in a separate plugin target
+// (Svelte.kcplugin) with no direct visibility into that one. Keeps -setFrameUsingName: below
+// from restoring this window onto a display that's since been disconnected.
+static BOOL SV_pointIsOnAnyScreen(NSPoint point) {
+    for (NSScreen *screen in [NSScreen screens]) {
+        if (NSPointInRect(point, screen.frame)) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+static NSScreen *SV_bestAvailableScreen(void) {
+    NSScreen *best = nil;
+    CGFloat bestArea = -1;
+    for (NSScreen *screen in [NSScreen screens]) {
+        NSRect frame = screen.frame;
+        CGFloat area = NSWidth(frame) * NSHeight(frame);
+        if (area > bestArea) {
+            bestArea = area;
+            best = screen;
+        }
+    }
+    return best ?: [NSScreen mainScreen];
+}
+
 @implementation SvelteVisualizerFactory
 
 -(NSString*) visualizerNibName
@@ -201,13 +228,23 @@
     [_visualizerWindow setFrame:r display:NO];
     [_visualizerWindow setFrameAutosaveName:@"svelte visualizerFrame"];
     [_visualizerWindow setFrameUsingName:@"svelte visualizerFrame"];
+    [self repositionIfOffscreen];
     [_visualizerWindow setOpaque:NO];
     [_visualizerWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-    
+
     _visualizerView = [[SvelteVisualizerView alloc] initWithFrame:r];
     [_visualizerWindow setContentView:_visualizerView];
-    
+
     _displayAll = [[[NSUserDefaults standardUserDefaults] valueForKey:@"svelte.displayAll"] boolValue];
+
+    // Handles a display being disconnected (or waking up in a different arrangement) while
+    // the app is already running, mirroring KCDefaultVisualizerWindow's identical handling
+    // for the keystroke bezel -- otherwise a mid-session disconnect is only caught the next
+    // time the app launches, not while it's actually happening.
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(screenParametersDidChange:)
+                                                 name:NSApplicationDidChangeScreenParametersNotification
+                                               object:nil];
     
     // TODO: migrate away from using NSNotificationCenter for this, as it is far too chatty
     __weak typeof(self) weakSelf = self;
@@ -226,6 +263,19 @@
     [_visualizerWindow release];
     [_visualizerView release];
     [super dealloc];
+}
+
+- (void)repositionIfOffscreen {
+    if (SV_pointIsOnAnyScreen(_visualizerWindow.frame.origin)) {
+        return;
+    }
+    NSRect screenFrame = SV_bestAvailableScreen().frame;
+    [_visualizerWindow setFrameOrigin:NSMakePoint(NSMinX(screenFrame) + 10, NSMinY(screenFrame) + 10)];
+    [_visualizerWindow saveFrameUsingName:@"svelte visualizerFrame"];
+}
+
+- (void)screenParametersDidChange:(NSNotification *)notification {
+    [self repositionIfOffscreen];
 }
 
 -(void) showVisualizer:(id)sender
@@ -266,6 +316,19 @@
 - (void)noteFlagsChanged:(NSEventModifierFlags)flags
 {
 	[_visualizerView noteFlagsChanged:flags];
+}
+
+// Same frozen-state risk KCDefaultVisualizer's held-modifier bezel has: the lit modifier
+// indicators are driven entirely by flagsChanged events, so if capturing stops while
+// modifiers are still physically held -- which is exactly what happens when casting is
+// toggled off via a modifier-bearing hotkey -- the flags-return-to-zero event that would
+// unlight them is dropped by KCAppController's _isCapturing guard and never arrives. The
+// indicators would then stay lit indefinitely, misreporting keys that aren't held. Resetting
+// to no-modifiers here also clears the last displayed string, which is the same thing any
+// ordinary flags change does.
+- (void)noteCapturingDidStop
+{
+	[_visualizerView noteFlagsChanged:0];
 }
 
 + (NSDictionary<NSString *, NSObject *> *)visualizerDefaults {

@@ -214,6 +214,14 @@ static NSString *kKCMouseVisualizerDisplayOptionKey = @"mouse.displayOption";
         case NSEventTypeLeftMouseDown:
         case NSEventTypeRightMouseDown:
         case NSEventTypeOtherMouseDown: {
+            NSColor *strokeColor = [[NSUserDefaults standardUserDefaults] colorForKey:@"default.bezelColor"];
+            if (event.type == NSEventTypeRightMouseDown) {
+                strokeColor = [NSColor colorWithRed:0.4 green:0.7 blue:1.0 alpha:1.0];
+            } else if (event.type == NSEventTypeOtherMouseDown) {
+                strokeColor = [NSColor systemPurpleColor];
+            }
+            self.circle.strokeColor = strokeColor.CGColor;
+
             self.circle.opacity = 1.0;
 
             if (self.animation == nil) {
