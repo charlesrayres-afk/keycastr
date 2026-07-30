@@ -242,7 +242,14 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
 		else if (hasOptionModifier && !_displayModifiedCharacters)
             [mutableResponse appendString:kShiftKeyString];
         else
-			needsShiftGlyph = !_displayModifiedCharacters;
+			// _displayModifiedCharacters alone used to suppress this unconditionally, which
+			// was right for Option+Shift (the combo's resulting character, e.g. "≠", is
+			// genuinely informative on its own) but wrong for bare Shift: a letter's "modified
+			// character" is just its capitalization, no more informative than the glyph, and
+			// indistinguishable from plain typing without it. Only suppress when Option is
+			// also part of the combo, preserving the Option-alone/Option+Shift behavior this
+			// preference exists for.
+			needsShiftGlyph = !hasOptionModifier || !_displayModifiedCharacters;
 	}
 
     if (_modifiers & NSEventModifierFlagCommand)
@@ -299,7 +306,12 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
         return mutableResponse;
 	}
 
-    if (_displayModifiedCharacters && !isCommand) {
+    // Restricted to Option specifically (not just "not a Command/Ctrl combo"): this raw-
+    // character substitution exists because Option can produce a genuinely different symbol
+    // (e.g. ⌥1 -> ¡) that's more informative shown directly than as a glyph+key. Bare Shift's
+    // "raw character" is just a capitalized letter, which isn't -- see the needsShiftGlyph
+    // comment above for the matching half of this fix.
+    if (_displayModifiedCharacters && hasOptionModifier && !isCommand) {
         if (keystroke.characters.length > 0) {
             [mutableResponse appendString:keystroke.characters];
         } else {
@@ -318,7 +330,37 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
             mutableResponse = [[mutableResponse uppercaseString] mutableCopy];
         }
 	}
-	
+
+    // Force a plain, UNMODIFIED single letter to uppercase, purely for legibility: at the font
+    // sizes used for a projected demo, lowercase "l" and uppercase "I" are nearly
+    // indistinguishable, and letter case no longer carries any information now that Shift is
+    // always rendered as its own ⇧ glyph. Kept separate from the block above rather than folded
+    // into it -- the two conditions are mutually exclusive by construction (that one requires
+    // at least one modifier, this one requires none), so they can never fight over the same
+    // string. Deliberately narrow on four counts:
+    //
+    //   * Multi-character special-key names ("fn ", "F1 ", 英数, かな) cannot reach here at all,
+    //     since every -_specialKeys entry returns early well above this point. The length
+    //     check keeps any other multi-character result out regardless.
+    //   * Non-letters (digits, punctuation, symbols) are skipped -- nothing that had no case
+    //     to begin with is touched.
+    //   * Modified keystrokes are left entirely to the existing block above. That matters
+    //     specifically for the Option dead-key keycap display: ⌥u and ⌥e intentionally render
+    //     LOWERCASE while default_displayModifiedCharacters is on, both asserted by tests in
+    //     KCKeystrokeConversionTests, and uppercasing every letter would silently break them.
+    //   * The uppercased form must still be a single character. This keeps German ß out: its
+    //     uppercase is the two-character "SS", exactly the confusion the keyCode 27 exception
+    //     above already exists to avoid.
+    if (!isCommand && !hasShiftModifier && !hasOptionModifier
+        && mutableResponse.length == 1
+        && [NSCharacterSet.letterCharacterSet characterIsMember:[mutableResponse characterAtIndex:0]])
+    {
+        NSString *uppercased = [mutableResponse uppercaseString];
+        if (uppercased.length == mutableResponse.length) {
+            mutableResponse = [uppercased mutableCopy];
+        }
+    }
+
 	return mutableResponse;
 }
 

@@ -3,3 +3,12 @@ build
 xcuserdata
 xcshareddata
 .idea
+
+# ...but keep KeyCastr's own shared schemes in version control. The blanket
+# "xcshareddata" rule above is why this project had no committed scheme, which in turn is
+# why KCVisualizerTests had no test action and silently never ran. Each parent directory has
+# to be re-included explicitly before the file can be: git will not descend into a directory
+# excluded by an earlier pattern, so a negation for the file alone would have no effect.
+!keycastr/KeyCastr.xcodeproj/xcshareddata/
+!keycastr/KeyCastr.xcodeproj/xcshareddata/xcschemes/
+!keycastr/KeyCastr.xcodeproj/xcshareddata/xcschemes/*.xcscheme

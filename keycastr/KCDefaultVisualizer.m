@@ -186,11 +186,11 @@ static const CGFloat kKCDefaultBezelPadding = 10.0;
     if (![keystroke isCommand] && [self shouldOnlyDisplayCommandKeys]) {
         return;
     }
-    
+
     if (![keystroke isModified] && [self shouldOnlyDisplayModifiedKeys]) {
         return;
     }
-    
+
     [visualizerWindow addKeystroke:keystroke];
 }
 
@@ -649,7 +649,20 @@ static const NSEventModifierFlags kKCTrackedModifierFlags = NSEventModifierFlagC
         return;
     }
 
-    if (collapseRepeats && [keystroke isCommand] && _currentBezelView != nil && [string isEqualToString:_lastCommandString])
+    // Both computed here, after the modifier-merge path above has had its chance to return:
+    // nothing between this point and their use below mutates the state they read.
+    BOOL inTypingBurst = collapseLongTyping && _currentBezelView != nil && _plainCharCount >= typingThreshold;
+    BOOL isRepeatOfLastShortcut = collapseRepeats && _currentBezelView != nil && [string isEqualToString:_lastCommandString];
+
+    // Gated on -isModified rather than -isCommand so single-modifier shortcuts (Shift+M in
+    // Photoshop) collapse to "⇧M ×4" like Cmd+Shift+4 always has. Control/Command repeats
+    // still collapse unconditionally, exactly as before; a Shift/Option-only repeat instead
+    // yields to collapseLongTyping when a typing burst is already running, so holding Shift
+    // to type an all-caps word containing a double letter ("ALL") stays "Typing…" rather
+    // than flipping to "⇧L ×2" mid-word. Ordinary mixed-case typing can't reach this gate at
+    // all: consecutive characters differ, and any unmodified character clears
+    // _lastCommandString below.
+    if (isRepeatOfLastShortcut && [keystroke isModified] && ([keystroke isCommand] || !inTypingBurst))
     {
         _commandRepeatCount++;
         [_currentBezelView setText:[NSString stringWithFormat:@"%@ ×%lu", string, (unsigned long)_commandRepeatCount]];
@@ -658,6 +671,12 @@ static const NSEventModifierFlags kKCTrackedModifierFlags = NSEventModifierFlagC
         return;
     }
 
+    // Deliberately still -isCommand, NOT -isModified: this branch calls
+    // -abandonCurrentBezelView and resets _plainCharCount, so admitting Shift-capitalized
+    // letters would tear down an in-progress "Typing…" bezel and restart the burst count on
+    // every capital in a sentence -- the exact visual noise collapseLongTyping exists to
+    // prevent. Single-modifier shortcuts reach the repeat gate above via _lastCommandString
+    // instead, without needing to own a bezel outright.
     if ([keystroke isCommand])
     {
         [self abandonCurrentBezelView];
@@ -669,10 +688,14 @@ static const NSEventModifierFlags kKCTrackedModifierFlags = NSEventModifierFlagC
         return;
     }
 
-    _lastCommandString = nil;
-    _commandRepeatCount = 0;
+    // Remembering this for modified-but-not-Command keystrokes is what lets the repeat gate
+    // above match on the SECOND press of e.g. Shift+M; it used to be cleared unconditionally
+    // here, which is why widening that gate alone had no effect. Unmodified characters still
+    // clear it, which is what keeps ordinary sentence typing out of the repeat path.
+    _lastCommandString = [keystroke isModified] ? string : nil;
+    _commandRepeatCount = [keystroke isModified] ? 1 : 0;
 
-    if (collapseLongTyping && _currentBezelView != nil && _plainCharCount >= typingThreshold)
+    if (inTypingBurst)
     {
         _plainCharCount++;
         CGFloat typingIndicatorFontSize = [userDefaults floatForKey:@"default.typingIndicatorFontSize"];
