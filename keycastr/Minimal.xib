@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="MinimalVisualizer">
+            <connections>
+                <outlet property="preferencesView" destination="Wgm-CC-VbE" id="f5J-V5-hoR"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <userDefaultsController representsSharedInstance="YES" id="2Th-Np-O1z"/>
+        <customView id="Wgm-CC-VbE" userLabel="Preferences">
+            <rect key="frame" x="0.0" y="0.0" width="371" height="430"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="29u-Uc-TyV">
+                    <rect key="frame" x="80" y="86" width="78" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="4I8-iR-ZL6"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Bezel Color:" id="4ve-Mc-3pM">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="uGL-RF-K1Y">
+                    <rect key="frame" x="164" y="84" width="44" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="22" id="N7V-dh-8Jd"/>
+                        <constraint firstAttribute="width" constant="44" id="NCc-ZN-TtL"/>
+                    </constraints>
+                    <color key="color" red="0.0" green="0.0" blue="0.0" alpha="0.74965277777777772" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.bezelColor" id="AbI-mO-6VW">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">KCColorValueTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </colorWell>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="62q-dg-5kh">
+                    <rect key="frame" x="88" y="53" width="70" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="oFU-N4-X8w"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Text Color:" id="fyX-oA-EyQ">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="ZiH-q0-EyW">
+                    <rect key="frame" x="164" y="51" width="44" height="22"/>
+                    <color key="color" white="1" alpha="0.79986979166666672" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.textColor" id="Ff8-Px-70j">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">KCColorValueTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </colorWell>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Zgx-cj-jaD">
+                    <rect key="frame" x="37" y="20" width="121" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="KGd-ha-ays"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Text Shadow Color:" id="kYE-Af-zLT">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <colorWell translatesAutoresizingMaskIntoConstraints="NO" id="mwP-U4-TFC">
+                    <rect key="frame" x="164" y="18" width="44" height="22"/>
+                    <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.textShadowColor" id="zud-1i-sKA">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">KCColorValueTransformer</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </colorWell>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="9aU-0D-acL">
+                    <rect key="frame" x="58" y="398" width="100" height="16"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="16" id="jN2-dD-Dvf"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Displayed Keys:" id="ssd-ts-nh9">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VU0-Os-GPT">
+                    <rect key="frame" x="167" y="396" width="176" height="18"/>
+                    <buttonCell key="cell" type="check" title="Modifier keys (⌘ ⌃ ⌥ ⇧)" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="W30-F9-ein">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="7X3-bP-ouV"/>
+                    </constraints>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.display.modifierKeys" id="6xI-kw-gv8"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Dyq-Yo-9d3">
+                    <rect key="frame" x="167" y="348" width="176" height="18"/>
+                    <buttonCell key="cell" type="check" title="Special &amp; navigation keys" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="vM3-29-GRq">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="spk-h1-000"/>
+                    </constraints>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.display.specialKeys" id="H0w-BR-HDr"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="akk-Lb-l01">
+                    <rect key="frame" x="167" y="324" width="69" height="18"/>
+                    <buttonCell key="cell" type="check" title="All keys" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="akk-c1-000">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="akk-h1-000"/>
+                    </constraints>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.display.allKeys" id="akk-b1-000"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Irr-sU-kXN">
+                    <rect key="frame" x="167" y="372" width="139" height="18"/>
+                    <buttonCell key="cell" type="check" title="Include fn key (🌐)" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="pV8-eQ-0qr">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="ifk-h1-000"/>
+                    </constraints>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.display.includeFunctionKey" id="HLg-33-n2l"/>
+                    </connections>
+                </button>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="kDM-l0-bIf">
+                    <rect key="frame" x="94" y="237" width="64" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="r5I-qf-06A"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Font Size:" id="XCh-o6-SHP">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="2CC-Xe-JBj">
+                    <rect key="frame" x="47" y="213" width="110" height="24"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="24" id="6oG-ce-AQd"/>
+                        <constraint firstAttribute="width" constant="106" id="x9Y-3o-Vou"/>
+                    </constraints>
+                    <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" alignment="right" title="Size of the keystrokes on the bezel" id="XzF-ie-HvC">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="mCn-KB-wjP">
+                    <rect key="frame" x="106" y="286" width="52" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="zXt-Eh-Gjk"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Anchor:" id="qcR-fI-YAd">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="1WX-BK-9aV">
+                    <rect key="frame" x="47" y="262" width="110" height="24"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="106" id="idN-fv-Jdp"/>
+                        <constraint firstAttribute="height" constant="24" id="pWp-S2-5jn"/>
+                    </constraints>
+                    <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" alignment="right" id="13j-C2-LOc">
+                        <font key="font" metaFont="miniSystem"/>
+                        <string key="title">Direction the bezel
+expands away from</string>
+                        <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hbr-Js-dUP">
+                    <rect key="frame" x="164" y="241" width="187" height="9"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="187" id="YqI-Pf-1us"/>
+                    </constraints>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" state="on" alignment="left" minValue="8" maxValue="160" doubleValue="80" tickMarkPosition="above" sliderType="linear" id="UNY-7F-9eF"/>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.fontSize" id="7HQ-hc-WSZ">
+                            <dictionary key="options">
+                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </slider>
+                <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XAl-SB-bm6">
+                    <rect key="frame" x="162" y="226" width="23" height="11"/>
+                    <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Tiny" id="QyO-mq-5Ts">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OFc-Rg-p5c">
+                    <rect key="frame" x="325" y="226" width="28" height="11"/>
+                    <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Huge" id="WtW-hl-Y5p">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="diC-wU-M87">
+                    <rect key="frame" x="49" y="165" width="108" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="104" id="0jw-wo-h8l"/>
+                    </constraints>
+                    <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" alignment="right" id="hdo-ii-VGz">
+                        <font key="font" metaFont="miniSystem"/>
+                        <string key="title">Size of the
+bezel frame</string>
+                        <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nxk-Tr-B9X">
+                    <rect key="frame" x="164" y="191" width="187" height="11"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" state="on" alignment="left" minValue="10" maxValue="200" doubleValue="100" tickMarkPosition="above" sliderType="linear" id="Xdr-iJ-N8w"/>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.bezelSize" id="oaO-SL-ZPZ">
+                            <dictionary key="options">
+                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </slider>
+                <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Exc-vB-3MN">
+                    <rect key="frame" x="162" y="176" width="28" height="11"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="24" id="qI7-Xv-Rlo"/>
+                    </constraints>
+                    <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Small" id="AOX-zg-5U5">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j3r-Lz-MeS">
+                    <rect key="frame" x="324" y="176" width="29" height="11"/>
+                    <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Large" id="wym-d4-amE">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="PG2-Pn-cc1">
+                    <rect key="frame" x="88" y="188" width="70" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="Whb-Ea-vMZ"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Bezel Size:" id="y2U-Qd-sdD">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="tCa-Tk-gWG">
+                    <rect key="frame" x="49" y="117" width="108" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="104" id="c3n-bf-712"/>
+                    </constraints>
+                    <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" alignment="right" title="Roundness of the bezel edges" id="L1U-qN-Ous">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="disabledControlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qjo-W6-kpa">
+                    <rect key="frame" x="164" y="143" width="187" height="11"/>
+                    <sliderCell key="cell" controlSize="mini" state="on" alignment="left" maxValue="40" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="TZt-91-xJJ"/>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.borderRadius" id="Jrg-zy-ndk"/>
+                    </connections>
+                </slider>
+                <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bv7-Jr-Nv2">
+                    <rect key="frame" x="162" y="128" width="28" height="11"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="24" id="45M-bL-MTM"/>
+                    </constraints>
+                    <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Sharp" id="Vh0-Zh-EMC">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MV0-aw-XjM">
+                    <rect key="frame" x="310" y="128" width="43" height="11"/>
+                    <textFieldCell key="cell" controlSize="mini" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Rounded" id="zMg-nS-I5z">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="BQb-MC-dyy">
+                    <rect key="frame" x="64" y="140" width="94" height="17"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="Mo9-5w-sbJ"/>
+                    </constraints>
+                    <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="right" title="Border Radius:" id="AIw-ze-Hud">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PUX-aY-qwd">
+                    <rect key="frame" x="237" y="285" width="54" height="17"/>
+                    <buttonCell key="cell" type="radio" title="Right" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="BtE-rf-Dw1">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="caP-6T-knH"/>
+                    </constraints>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.anchorRight" id="Yxq-mz-YLn"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DUK-89-zpr">
+                    <rect key="frame" x="167" y="285" width="46" height="17"/>
+                    <buttonCell key="cell" type="radio" title="Left" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="xC8-Qp-jQF">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="17" id="jvU-xF-U2H"/>
+                    </constraints>
+                    <connections>
+                        <binding destination="2Th-Np-O1z" name="value" keyPath="values.minimal.anchorRight" id="F72-SZ-nmm">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </button>
+                <box autoresizesSubviews="NO" verticalHuggingPriority="750" boxType="separator" id="WcB-q2-CS9">
+                    <rect key="frame" x="-47" y="311" width="467" height="5"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                </box>
+            </subviews>
+            <constraints>
+                <constraint firstItem="PG2-Pn-cc1" firstAttribute="trailing" secondItem="mCn-KB-wjP" secondAttribute="trailing" id="24a-Ja-PgC"/>
+                <constraint firstItem="Zgx-cj-jaD" firstAttribute="top" secondItem="62q-dg-5kh" secondAttribute="bottom" constant="16" id="29H-hq-Xnd"/>
+                <constraint firstItem="diC-wU-M87" firstAttribute="firstBaseline" secondItem="Exc-vB-3MN" secondAttribute="firstBaseline" id="2vG-Qy-EqM"/>
+                <constraint firstItem="Exc-vB-3MN" firstAttribute="top" secondItem="Nxk-Tr-B9X" secondAttribute="bottom" constant="4" id="3HY-og-cuV"/>
+                <constraint firstItem="kDM-l0-bIf" firstAttribute="top" secondItem="1WX-BK-9aV" secondAttribute="bottom" constant="8" symbolic="YES" id="3vB-3f-8di"/>
+                <constraint firstItem="Nxk-Tr-B9X" firstAttribute="trailing" secondItem="hbr-Js-dUP" secondAttribute="trailing" id="5EV-d3-qBm"/>
+                <constraint firstItem="diC-wU-M87" firstAttribute="height" secondItem="1WX-BK-9aV" secondAttribute="height" multiplier="0.916667" id="5IA-mV-843"/>
+                <constraint firstItem="Exc-vB-3MN" firstAttribute="leading" secondItem="tCa-Tk-gWG" secondAttribute="trailing" constant="9" id="6fV-Fl-gOB"/>
+                <constraint firstItem="Nxk-Tr-B9X" firstAttribute="leading" secondItem="hbr-Js-dUP" secondAttribute="leading" id="6vV-YP-sb8"/>
+                <constraint firstItem="tCa-Tk-gWG" firstAttribute="top" secondItem="BQb-MC-dyy" secondAttribute="bottom" constant="1" id="7B8-Du-pLK"/>
+                <constraint firstItem="2CC-Xe-JBj" firstAttribute="height" secondItem="1WX-BK-9aV" secondAttribute="height" id="7in-2J-04K"/>
+                <constraint firstItem="qjo-W6-kpa" firstAttribute="centerY" secondItem="BQb-MC-dyy" secondAttribute="centerY" id="9DD-S1-ffA"/>
+                <constraint firstItem="MV0-aw-XjM" firstAttribute="top" secondItem="qjo-W6-kpa" secondAttribute="bottom" constant="4" id="Biq-NZ-Rur"/>
+                <constraint firstItem="tCa-Tk-gWG" firstAttribute="height" secondItem="1WX-BK-9aV" secondAttribute="height" multiplier="0.916667" id="Bnz-OV-y5s"/>
+                <constraint firstItem="DUK-89-zpr" firstAttribute="leading" secondItem="mCn-KB-wjP" secondAttribute="trailing" constant="11" id="CEh-8x-rA7"/>
+                <constraint firstItem="qjo-W6-kpa" firstAttribute="leading" secondItem="Nxk-Tr-B9X" secondAttribute="leading" id="Ca4-ND-xXx"/>
+                <constraint firstItem="diC-wU-M87" firstAttribute="trailing" secondItem="1WX-BK-9aV" secondAttribute="trailing" id="D2g-Jf-m4n"/>
+                <constraint firstItem="bv7-Jr-Nv2" firstAttribute="top" secondItem="qjo-W6-kpa" secondAttribute="bottom" constant="4" id="DgI-K2-94z"/>
+                <constraint firstItem="bv7-Jr-Nv2" firstAttribute="firstBaseline" secondItem="tCa-Tk-gWG" secondAttribute="firstBaseline" id="Eei-e6-Ao0"/>
+                <constraint firstItem="diC-wU-M87" firstAttribute="top" secondItem="PG2-Pn-cc1" secondAttribute="bottom" constant="1" id="Ezj-N6-NE7"/>
+                <constraint firstItem="BQb-MC-dyy" firstAttribute="trailing" secondItem="mCn-KB-wjP" secondAttribute="trailing" id="GXf-3C-urW"/>
+                <constraint firstItem="hbr-Js-dUP" firstAttribute="centerY" secondItem="kDM-l0-bIf" secondAttribute="centerY" id="JQJ-bV-llV"/>
+                <constraint firstItem="mwP-U4-TFC" firstAttribute="trailing" secondItem="uGL-RF-K1Y" secondAttribute="trailing" id="Jdy-eb-UuO"/>
+                <constraint firstItem="mwP-U4-TFC" firstAttribute="height" secondItem="uGL-RF-K1Y" secondAttribute="height" id="K3u-i2-6g3"/>
+                <constraint firstItem="uGL-RF-K1Y" firstAttribute="leading" secondItem="XAl-SB-bm6" secondAttribute="leading" id="Kac-vk-w6G"/>
+                <constraint firstItem="2CC-Xe-JBj" firstAttribute="firstBaseline" secondItem="XAl-SB-bm6" secondAttribute="firstBaseline" id="PFR-4n-9pB"/>
+                <constraint firstAttribute="bottom" secondItem="Zgx-cj-jaD" secondAttribute="bottom" constant="20" id="PXU-s3-UXF"/>
+                <constraint firstItem="qjo-W6-kpa" firstAttribute="trailing" secondItem="Nxk-Tr-B9X" secondAttribute="trailing" id="S2s-C8-idW"/>
+                <constraint firstItem="PUX-aY-qwd" firstAttribute="leading" secondItem="DUK-89-zpr" secondAttribute="trailing" constant="24" id="Sei-4b-yeG"/>
+                <constraint firstItem="uGL-RF-K1Y" firstAttribute="leading" secondItem="29u-Uc-TyV" secondAttribute="trailing" constant="8" symbolic="YES" id="TDg-KZ-j8v"/>
+                <constraint firstItem="mwP-U4-TFC" firstAttribute="width" secondItem="uGL-RF-K1Y" secondAttribute="width" id="Y7Y-8N-4JE"/>
+                <constraint firstItem="2CC-Xe-JBj" firstAttribute="top" secondItem="kDM-l0-bIf" secondAttribute="bottom" id="Z3x-49-Vlc"/>
+                <constraint firstItem="PUX-aY-qwd" firstAttribute="centerY" secondItem="DUK-89-zpr" secondAttribute="centerY" id="alw-ix-f1O"/>
+                <constraint firstItem="XAl-SB-bm6" firstAttribute="leading" secondItem="hbr-Js-dUP" secondAttribute="leading" id="bkh-LY-vxc"/>
+                <constraint firstItem="Irr-sU-kXN" firstAttribute="top" secondItem="VU0-Os-GPT" secondAttribute="bottom" constant="6" id="cA1-fn-top"/>
+                <constraint firstItem="Irr-sU-kXN" firstAttribute="leading" secondItem="DUK-89-zpr" secondAttribute="leading" id="cA2-fn-led"/>
+                <constraint firstItem="VU0-Os-GPT" firstAttribute="top" secondItem="Wgm-CC-VbE" secondAttribute="top" constant="16" id="cC1-cm-top"/>
+                <constraint firstItem="VU0-Os-GPT" firstAttribute="leading" secondItem="DUK-89-zpr" secondAttribute="leading" id="cC2-cm-led"/>
+                <constraint firstItem="ZiH-q0-EyW" firstAttribute="centerY" secondItem="62q-dg-5kh" secondAttribute="centerY" id="cCK-sg-iSn"/>
+                <constraint firstItem="Dyq-Yo-9d3" firstAttribute="top" secondItem="Irr-sU-kXN" secondAttribute="bottom" constant="6" id="cF1-sp-top"/>
+                <constraint firstItem="Dyq-Yo-9d3" firstAttribute="leading" secondItem="DUK-89-zpr" secondAttribute="leading" id="cF2-sp-led"/>
+                <constraint firstItem="akk-Lb-l01" firstAttribute="top" secondItem="Dyq-Yo-9d3" secondAttribute="bottom" constant="6" id="cG1-ak-top"/>
+                <constraint firstItem="akk-Lb-l01" firstAttribute="leading" secondItem="DUK-89-zpr" secondAttribute="leading" id="cG2-ak-led"/>
+                <constraint firstItem="62q-dg-5kh" firstAttribute="top" secondItem="29u-Uc-TyV" secondAttribute="bottom" constant="16" id="cWc-jI-3e0"/>
+                <constraint firstItem="PG2-Pn-cc1" firstAttribute="top" secondItem="2CC-Xe-JBj" secondAttribute="bottom" constant="8" symbolic="YES" id="clb-Hh-Iek"/>
+                <constraint firstItem="XAl-SB-bm6" firstAttribute="top" secondItem="hbr-Js-dUP" secondAttribute="bottom" constant="4" id="d99-f4-3gF"/>
+                <constraint firstItem="Exc-vB-3MN" firstAttribute="leading" secondItem="hbr-Js-dUP" secondAttribute="leading" id="eCs-3U-Rw5"/>
+                <constraint firstItem="Zgx-cj-jaD" firstAttribute="trailing" secondItem="29u-Uc-TyV" secondAttribute="trailing" id="eGM-if-MNa"/>
+                <constraint firstItem="OFc-Rg-p5c" firstAttribute="trailing" secondItem="hbr-Js-dUP" secondAttribute="trailing" id="fCl-TP-F0p"/>
+                <constraint firstItem="ZiH-q0-EyW" firstAttribute="trailing" secondItem="uGL-RF-K1Y" secondAttribute="trailing" id="gkU-ph-5Hx"/>
+                <constraint firstItem="2CC-Xe-JBj" firstAttribute="trailing" secondItem="1WX-BK-9aV" secondAttribute="trailing" id="hg2-Ji-AtC"/>
+                <constraint firstItem="hbr-Js-dUP" firstAttribute="leading" secondItem="kDM-l0-bIf" secondAttribute="trailing" constant="8" symbolic="YES" id="i32-gP-C1S"/>
+                <constraint firstItem="1WX-BK-9aV" firstAttribute="top" secondItem="mCn-KB-wjP" secondAttribute="bottom" id="iak-5N-4bl"/>
+                <constraint firstItem="mwP-U4-TFC" firstAttribute="centerY" secondItem="Zgx-cj-jaD" secondAttribute="centerY" id="jh2-UE-dxt"/>
+                <constraint firstItem="9aU-0D-acL" firstAttribute="trailing" secondItem="mCn-KB-wjP" secondAttribute="trailing" id="jvO-vt-T9k"/>
+                <constraint firstItem="OFc-Rg-p5c" firstAttribute="top" secondItem="hbr-Js-dUP" secondAttribute="bottom" constant="4" id="lhv-s8-XGl"/>
+                <constraint firstItem="DUK-89-zpr" firstAttribute="top" secondItem="mCn-KB-wjP" secondAttribute="top" constant="1" id="luD-lH-eYc"/>
+                <constraint firstItem="29u-Uc-TyV" firstAttribute="top" secondItem="tCa-Tk-gWG" secondAttribute="bottom" constant="14" id="oGn-JZ-O18"/>
+                <constraint firstItem="ZiH-q0-EyW" firstAttribute="width" secondItem="uGL-RF-K1Y" secondAttribute="width" id="rMN-DR-W5Y"/>
+                <constraint firstItem="MV0-aw-XjM" firstAttribute="trailing" secondItem="OFc-Rg-p5c" secondAttribute="trailing" id="sf0-3q-zqa"/>
+                <constraint firstItem="BQb-MC-dyy" firstAttribute="top" secondItem="diC-wU-M87" secondAttribute="bottom" constant="8" symbolic="YES" id="snn-CW-CFh"/>
+                <constraint firstItem="kDM-l0-bIf" firstAttribute="trailing" secondItem="mCn-KB-wjP" secondAttribute="trailing" id="ssj-Eh-bZs"/>
+                <constraint firstAttribute="trailing" secondItem="hbr-Js-dUP" secondAttribute="trailing" constant="20" symbolic="YES" id="tml-bK-jb1"/>
+                <constraint firstItem="Nxk-Tr-B9X" firstAttribute="centerY" secondItem="PG2-Pn-cc1" secondAttribute="centerY" id="txN-56-X2o"/>
+                <constraint firstItem="j3r-Lz-MeS" firstAttribute="trailing" secondItem="hbr-Js-dUP" secondAttribute="trailing" id="uon-lR-hN4"/>
+                <constraint firstItem="j3r-Lz-MeS" firstAttribute="top" secondItem="Nxk-Tr-B9X" secondAttribute="bottom" constant="4" id="uzY-ng-cYa"/>
+                <constraint firstItem="tCa-Tk-gWG" firstAttribute="trailing" secondItem="1WX-BK-9aV" secondAttribute="trailing" id="v15-sh-qVu"/>
+                <constraint firstItem="29u-Uc-TyV" firstAttribute="trailing" secondItem="62q-dg-5kh" secondAttribute="trailing" id="vZa-Jw-MCe"/>
+                <constraint firstItem="bv7-Jr-Nv2" firstAttribute="leading" secondItem="qjo-W6-kpa" secondAttribute="leading" id="wWe-Xd-dZj"/>
+                <constraint firstItem="bv7-Jr-Nv2" firstAttribute="leading" secondItem="tCa-Tk-gWG" secondAttribute="trailing" constant="9" id="wfK-DR-Jgy"/>
+                <constraint firstItem="9aU-0D-acL" firstAttribute="firstBaseline" secondItem="VU0-Os-GPT" secondAttribute="firstBaseline" id="wvf-QB-ZwZ"/>
+                <constraint firstItem="ZiH-q0-EyW" firstAttribute="height" secondItem="uGL-RF-K1Y" secondAttribute="height" id="wxg-BH-R0Y"/>
+                <constraint firstItem="uGL-RF-K1Y" firstAttribute="centerY" secondItem="29u-Uc-TyV" secondAttribute="centerY" id="zZF-EE-7wL"/>
+            </constraints>
+            <point key="canvasLocation" x="-83.5" y="11"/>
+        </customView>
+    </objects>
+</document>

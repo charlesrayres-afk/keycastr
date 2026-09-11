@@ -157,7 +157,7 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
 
 #pragma mark - Value Transformer
 
-- (NSDictionary *)_specialKeys
++ (NSDictionary *)specialKeys
 {
     static NSDictionary *d = nil;
     if (d == nil) {
@@ -186,27 +186,27 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
              UTF8("\xf0\x9f\x8e\xa4"), @176, // dictation key (microphone)
              UTF8("\xe2\x8f\xbe"), @178,     // focus key (unicode power sleep symbol)
              UTF8("\xe2\x90\xa3\xe2\x80\x8b"), @49, // space
-             @"fn ", @179,  // fn key (could also be globe symbol on newer keyboards)
-             @"F1 ", @122,  // F1
-             @"F2 ", @120,  // F2
-             @"F3 ", @99,   // F3
-             @"F4 ", @118,  // F4
-             @"F5 ", @96,   // F5
-             @"F6 ", @97,   // F6
-             @"F7 ", @98,   // F7
-             @"F8 ", @100,  // F8
-             @"F9 ", @101,  // F9
-             @"F10 ", @109, // F10
-             @"F11 ", @103, // F11
-             @"F12 ", @111, // F12
-             @"F13 ", @105, // F13
-             @"F14 ", @107, // F14
-             @"F15 ", @113, // F15
-             @"F16 ", @106, // F16
-             @"F17 ", @64,  // F17
-             @"F18 ", @79,  // F18
-             @"F19 ", @80,  // F19
-             @"F20 ", @90,  // F20
+             @"fn", @179,  // fn key (could also be globe symbol on newer keyboards)
+             @"F1", @122,  // F1
+             @"F2", @120,  // F2
+             @"F3", @99,   // F3
+             @"F4", @118,  // F4
+             @"F5", @96,   // F5
+             @"F6", @97,   // F6
+             @"F7", @98,   // F7
+             @"F8", @100,  // F8
+             @"F9", @101,  // F9
+             @"F10", @109, // F10
+             @"F11", @103, // F11
+             @"F12", @111, // F12
+             @"F13", @105, // F13
+             @"F14", @107, // F14
+             @"F15", @113, // F15
+             @"F16", @106, // F16
+             @"F17", @64,  // F17
+             @"F18", @79,  // F18
+             @"F19", @80,  // F19
+             @"F20", @90,  // F20
              @"英数", @0x66, // eisū key, JIS keyboards only
              @"かな", @0x68, // kana key, JIS keyboards only
              nil];
@@ -219,76 +219,71 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
     NSEventModifierFlags _modifiers = event.modifierFlags;
     BOOL hasOptionModifier = (_modifiers & NSEventModifierFlagOption) != 0;
     BOOL hasShiftModifier = (_modifiers & NSEventModifierFlagShift) != 0;
-    BOOL isCommand = (_modifiers & (NSEventModifierFlagControl | NSEventModifierFlagCommand)) != 0;
-    
-    BOOL needsShiftGlyph = NO;
-    
+    BOOL isCommand = event.isCommand;
+
+    __block BOOL needsShiftGlyph = NO;
+
     NSMutableString *mutableResponse = [NSMutableString string];
 
     if (_modifiers & NSEventModifierFlagControl)
-	{
-		[mutableResponse appendString:kControlKeyString];
-	}
+    {
+        [mutableResponse appendString:kControlKeyString];
+    }
 
-	if (hasOptionModifier && (isCommand || !_displayModifiedCharacters))
-	{
-		[mutableResponse appendString:kOptionKeyString];
-	}
+    if (hasOptionModifier && (isCommand || !_displayModifiedCharacters))
+    {
+        [mutableResponse appendString:kOptionKeyString];
+    }
 
     if (hasShiftModifier)
-	{
-		if (isCommand)
-			[mutableResponse appendString:kShiftKeyString];
-		else if (hasOptionModifier && !_displayModifiedCharacters)
+    {
+        if (isCommand || (hasOptionModifier && !_displayModifiedCharacters))
             [mutableResponse appendString:kShiftKeyString];
         else
-			// _displayModifiedCharacters alone used to suppress this unconditionally, which
-			// was right for Option+Shift (the combo's resulting character, e.g. "≠", is
-			// genuinely informative on its own) but wrong for bare Shift: a letter's "modified
-			// character" is just its capitalization, no more informative than the glyph, and
-			// indistinguishable from plain typing without it. Only suppress when Option is
-			// also part of the combo, preserving the Option-alone/Option+Shift behavior this
-			// preference exists for.
-			needsShiftGlyph = !hasOptionModifier || !_displayModifiedCharacters;
-	}
+            // _displayModifiedCharacters alone used to suppress this unconditionally, which
+            // was right for Option+Shift (the combo's resulting character, e.g. "≠", is
+            // genuinely informative on its own) but wrong for bare Shift: a letter's "modified
+            // character" is just its capitalization, no more informative than the glyph, and
+            // indistinguishable from plain typing without it. Only suppress when Option is
+            // also part of the combo, preserving the Option-alone/Option+Shift behavior this
+            // preference exists for.
+            needsShiftGlyph = !hasOptionModifier || !_displayModifiedCharacters;
+    }
 
-    if (_modifiers & NSEventModifierFlagCommand)
-	{
-		if (needsShiftGlyph)
-		{
-			[mutableResponse appendString:kShiftKeyString];
-			needsShiftGlyph = NO;
-		}
-		[mutableResponse appendString:kCommandKeyString];
-	}
-
-    if ([event isKindOfClass:[KCMouseEvent class]]) {
+    void (^addShiftGlyphIfNeeded)(void) = ^{
         if (needsShiftGlyph) {
             [mutableResponse appendString:kShiftKeyString];
             needsShiftGlyph = NO;
         }
+    };
+
+    if (_modifiers & NSEventModifierFlagCommand)
+    {
+        addShiftGlyphIfNeeded();
+        [mutableResponse appendString:kCommandKeyString];
+    }
+
+    if ([event isKindOfClass:[KCMouseEvent class]]) {
+        addShiftGlyphIfNeeded();
         [mutableResponse appendString:@"🖱️"];
         return mutableResponse;
     }
-    
+
     KCKeystroke *keystroke = (KCKeystroke *)event;
 
     // check for bare shift-tab as left tab special case
-    if (hasShiftModifier && !keystroke.isCommand && !hasOptionModifier)
+    if (hasShiftModifier && !isCommand && !hasOptionModifier)
     {
         if (keystroke.keyCode == 48) {
             [mutableResponse appendString:kLeftTabString];
             return mutableResponse;
         }
     }
-
-    if (needsShiftGlyph) {
-        [mutableResponse appendString:kShiftKeyString];
-        needsShiftGlyph = NO;
-    }
     
+    addShiftGlyphIfNeeded();
+
     void(^appendModifiers)(BOOL) = ^(BOOL append) {
-        if (append && !keystroke.isCommand) {
+        if (append && !isCommand) {
             if (hasOptionModifier) {
                 [mutableResponse appendString:kOptionKeyString];
             }
@@ -297,8 +292,8 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
             }
         }
     };
-    
-    NSString *specialKeyString = [[self _specialKeys] objectForKey:@(keystroke.keyCode)];
+
+    NSString *specialKeyString = [KCEventTransformer.specialKeys objectForKey:@(keystroke.keyCode)];
     if (specialKeyString)
     {
         appendModifiers(_displayModifiedCharacters);
@@ -362,6 +357,28 @@ static NSString* kLeftTabString = @"\xe2\x87\xa4";
     }
 
 	return mutableResponse;
+}
+
+- (NSString *)keyCapForKeystroke:(KCKeystroke *)keystroke
+{
+    NSString *specialKeyString = [KCEventTransformer.specialKeys objectForKey:@(keystroke.keyCode)];
+    if (specialKeyString) {
+        return specialKeyString;
+    }
+
+    NSString *keyCap = [self translatedCharacterForKeystroke:keystroke];
+
+    // Uppercase to match keycap convention when a modifier is held, mirroring the
+    // key portion of -transformedValue:. keyCode 27 is excepted there as well.
+    NSEventModifierFlags modifiers = keystroke.modifierFlags;
+    BOOL shouldUppercase = keystroke.isCommand
+        || (modifiers & NSEventModifierFlagShift)
+        || (modifiers & NSEventModifierFlagOption);
+    if (shouldUppercase && keystroke.keyCode != 27) {
+        keyCap = [keyCap uppercaseString];
+    }
+
+    return keyCap;
 }
 
 - (NSString *)translatedCharacterForKeystroke:(KCKeystroke *)keystroke {
