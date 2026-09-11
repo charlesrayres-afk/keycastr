@@ -36,6 +36,7 @@
 #import "KCAppController.h"
 #import "KCEventTap.h"
 #import "KCKeystroke.h"
+#import "KCMouseEvent.h"
 #import "KCMouseEventVisualizer.h"
 #import "KCPrefsWindowController.h"
 #import "KCUserDefaultsMigration.h"
@@ -142,6 +143,11 @@ static NSData *KCArchivedColor(NSColor *color) {
                                              selector:@selector(applicationDidHide:)
                                                  name:NSApplicationDidHideNotification
                                                object:NSApp];
+
+    [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
+                                                          selector:@selector(activeApplicationDidChange:)
+                                                              name:NSWorkspaceDidActivateApplicationNotification
+                                                            object:nil];
 
     [self reorderStatusMenu];
 }
@@ -316,6 +322,14 @@ static NSData *KCArchivedColor(NSColor *color) {
     [eventTap removeTap];
 }
 
+- (void)activeApplicationDidChange:(NSNotification *)notification {
+    // Handle a special case where an application becomes active which restricts
+    // or interferes with key events. Send an optional nil keyUp event to avoid a stuck key.
+    if ([currentVisualizer respondsToSelector:@selector(noteKeyUpEvent:)]) {
+        [currentVisualizer noteKeyUpEvent:nil];
+    }
+}
+
 - (SRShortcut *)toggleCastingShortcut {
     if (_toggleCastingShortcut == nil) {
         KeyCombo toggleShortcutKey;
@@ -457,8 +471,9 @@ static NSData *KCArchivedColor(NSColor *color) {
 
 - (void)eventTap:(KCEventTap *)eventTap noteMouseEvent:(KCMouseEvent *)mouseEvent
 {
-    // TODO: need to let mouseUp events through after isCapturing or mouse events are disabled, otherwise we can end up with a stuck visualizer animation
-    if (!_isCapturing) {
+    // Always let mouse-up through to avoid a stuck visualization. Down/drag stay gated.
+    BOOL isMouseUp = (NSEventMaskFromType(mouseEvent.type) & (NSEventMaskLeftMouseUp | NSEventMaskRightMouseUp | NSEventMaskOtherMouseUp)) != 0;
+    if (!_isCapturing && !isMouseUp) {
         return;
     }
 
@@ -636,6 +651,10 @@ static NSData *KCArchivedColor(NSColor *color) {
         if (currentVisualizer != nil && [currentVisualizer respondsToSelector:@selector(noteCapturingDidStop)]) {
             [currentVisualizer noteCapturingDidStop];
         }
+
+        // Also clear flag state directly, which covers visualizers that don't
+        // implement -noteCapturingDidStop (upstream's Minimal visualizer among them).
+        [currentVisualizer noteFlagsChanged:0];
     }
 
 	[statusItem.button setImage:(_isCapturing

@@ -48,8 +48,17 @@
 
     _type = event.type;
     _modifierFlags = event.modifierFlags;
+    _underlyingEvent = event;
 
     return self;
+}
+
+- (BOOL)isCommand {
+    return (self.modifierFlags & (NSEventModifierFlagControl | NSEventModifierFlagCommand)) != 0;
+}
+
+- (BOOL)isModified {
+    return (self.modifierFlags & (NSEventModifierFlagControl | NSEventModifierFlagCommand | NSEventModifierFlagOption | NSEventModifierFlagShift)) != 0;
 }
 
 - (NSString *)convertToString {

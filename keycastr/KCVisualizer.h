@@ -44,10 +44,10 @@
 
 - (void)noteKeyEvent:(KCKeycastrEvent *)event;
 - (void)noteFlagsChanged:(NSEventModifierFlags)flags;
-- (void)noteMouseEvent:(KCMouseEvent *)mouseEvent;
 
 @optional
 - (void)noteKeyUpEvent:(KCKeycastrEvent *)event;
+- (void)noteMouseEvent:(KCMouseEvent *)mouseEvent;
 
 // Called when capturing transitions from on to off, regardless of what triggered it (the
 // toggle hotkey, the status menu, anything else). Lets a visualizer clean up any state
